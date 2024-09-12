@@ -1,7 +1,7 @@
 ### Example user template template
 ### Example user template
 
-credentials.h
+#credentials.h
 
 # IntelliJ project files
 .idea

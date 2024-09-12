@@ -6,10 +6,15 @@
 #include "ArduinoJson.h"
 #include <Base64.h>  // Base64エンコーディング用
 #include "credentials.h"
+#include <time.h>    // For time functions
 
 String apiUrl;
 String uploadUrl;
 String authToken;
+
+const char* ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 3600; // Adjust according to your timezone
+const int daylightOffset_sec = 3600;
 
 // WiFi接続処理
 void connectToWiFi() {
@@ -19,6 +24,26 @@ void connectToWiFi() {
     Serial.println("WiFiに接続中...");
   }
   Serial.println("WiFi接続成功！");
+}
+
+// NTPによる時刻取得処理
+void initTime() {
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  Serial.println("NTPサーバーに接続して時刻を取得中...");
+  delay(2000);
+}
+
+// 現在の日付と時刻を取得し、ファイル名として使用
+String getFileName() {
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    Serial.println("時刻取得に失敗しました");
+    return "image.jpg"; // 失敗した場合のデフォルト名
+  }
+
+  char buffer[30];
+  strftime(buffer, sizeof(buffer), "image_%Y%m%d_%H%M%S.jpg", &timeinfo); // YYYYMMDD_HHMMSS.jpg
+  return String(buffer);
 }
 
 // カメラの初期化
@@ -122,17 +147,19 @@ void uploadImageToB2() {
     return;
   }
 
+  String fileName = getFileName();  // Get the current time-based file name
+
   HTTPClient http;
   http.begin(uploadUrl);
   http.addHeader("Authorization", authToken);
-  http.addHeader("X-Bz-File-Name", "image.jpg");  // Set the file name
+  http.addHeader("X-Bz-File-Name", fileName);  // Set the time-based file name
   http.addHeader("Content-Type", "b2/x-auto");    // Content type
   http.addHeader("X-Bz-Content-Sha1", "do_not_verify");  // Skip checksum verification for now
 
   int httpResponseCode = http.POST(fb->buf, fb->len);  // Upload the image
 
   if (httpResponseCode > 0) {
-    Serial.printf("Image uploaded successfully, response code: %d\n", httpResponseCode);
+    Serial.printf("Image uploaded successfully as %s, response code: %d\n", fileName.c_str(), httpResponseCode);
   } else {
     Serial.printf("Upload failed: %s\n", http.errorToString(httpResponseCode).c_str());
   }
@@ -144,6 +171,7 @@ void uploadImageToB2() {
 void setup() {
   Serial.begin(115200);
   connectToWiFi();
+  initTime();  // Initialize NTP and get the current time
   initCamera();
 
   if (b2AuthorizeAccount() && b2GetUploadUrl()) {
