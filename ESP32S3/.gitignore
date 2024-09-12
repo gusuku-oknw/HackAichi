@@ -1,0 +1,10 @@
+### Example user template template
+### Example user template
+
+credentials.h
+
+# IntelliJ project files
+.idea
+*.iml
+out
+gen
