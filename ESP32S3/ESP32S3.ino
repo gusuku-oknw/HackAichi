@@ -181,5 +181,5 @@ void setup() {
 
 void loop() {
   uploadImageToB2();
-  delay(10000);  // Upload an image every 10 seconds
+  delay(600000);  // 10 minutes interval (600,000 milliseconds)
 }

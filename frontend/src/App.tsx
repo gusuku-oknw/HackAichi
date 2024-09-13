@@ -1,26 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+// src/App.tsx
+import React, { useState } from 'react';
+import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
+import { LocationOn, CalendarToday, AccountCircle } from '@mui/icons-material';
+import Calendar from './Calendar';
+import Profile from './Profile';
+import Map from './GoogleMaps';
+
+const center = {
+    lat: 35.681236,
+    lng: 139.767125,
+};
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [location, setLocation] = useState(center);
+    const [value, setValue] = useState(0);
+
+    const renderPageContent = () => {
+        switch (value) {
+            case 0:
+                return <Map center={location} />;
+            case 1:
+                return <Calendar />;
+            case 2:
+                return <Profile />;
+            default:
+                return null;
+        }
+    };
+
+    return (
+        <Box>
+            {/* トップバーを削除したので、ここには残りません */}
+
+            <Box style={{ marginTop: 16 }}>{renderPageContent()}</Box>
+
+            {/* ナビゲーションバー */}
+            <BottomNavigation
+                value={value}
+                onChange={(event, newValue) => {
+                    setValue(newValue);
+                }}
+                showLabels
+                style={{ position: 'fixed', bottom: 0, width: '100%' }}
+            >
+                <BottomNavigationAction label="Home" icon={<LocationOn />} />
+                <BottomNavigationAction label="Calendar" icon={<CalendarToday />} />
+                <BottomNavigationAction label="Profile" icon={<AccountCircle />} />
+            </BottomNavigation>
+        </Box>
+    );
 }
 
 export default App;
