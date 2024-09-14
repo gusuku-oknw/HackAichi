@@ -7,8 +7,8 @@ import Profile from './Profile';
 import Map from './GoogleMaps';
 
 const center = {
-    lat: 35.681236,
-    lng: 139.767125,
+    lat: 35.1681,
+    lng: 136.8879
 };
 
 function App() {
@@ -18,7 +18,7 @@ function App() {
     const renderPageContent = () => {
         switch (value) {
             case 0:
-                return <Map center={location} />;
+                return <Map />;
             case 1:
                 return <Calendar />;
             case 2:
