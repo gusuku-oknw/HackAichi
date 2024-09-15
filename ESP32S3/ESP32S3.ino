@@ -4,9 +4,10 @@
 #include "camera_pins.h"
 #include <HTTPClient.h>
 #include "ArduinoJson.h"
-#include <Base64.h>  // Base64エンコーディング用
+#include <Base64.h>  // For Base64 encoding
 #include "credentials.h"
 #include <time.h>    // For time functions
+#include <WebServer.h> // Web server library
 
 String apiUrl;
 String uploadUrl;
@@ -16,29 +17,34 @@ const char* ntpServer = "pool.ntp.org";
 const long gmtOffset_sec = 3600; // Adjust according to your timezone
 const int daylightOffset_sec = 3600;
 
-// WiFi接続処理
+WebServer server(80); // Create a web server object that listens on port 80
+
+// WiFi connection function
 void connectToWiFi() {
   WiFi.begin(ssid, password);
+  WiFi.setSleep(false); // Disable WiFi sleep
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
-    Serial.println("WiFiに接続中...");
+    Serial.println("Connecting to WiFi...");
   }
-  Serial.println("WiFi接続成功！");
+  Serial.println("WiFi connected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
-// NTPによる時刻取得処理
+// NTP time initialization
 void initTime() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-  Serial.println("NTPサーバーに接続して時刻を取得中...");
+  Serial.println("Fetching time from NTP server...");
   delay(2000);
 }
 
-// 現在の日付と時刻を取得し、ファイル名として使用
+// Get current date and time for filename
 String getFileName() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
-    Serial.println("時刻取得に失敗しました");
-    return "image.jpg"; // 失敗した場合のデフォルト名
+    Serial.println("Failed to obtain time");
+    return "image.jpg"; // Default name if time not available
   }
 
   char buffer[30];
@@ -46,7 +52,7 @@ String getFileName() {
   return String(buffer);
 }
 
-// カメラの初期化
+// Initialize the camera
 void initCamera() {
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -68,19 +74,25 @@ void initCamera() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 20000000;
-  config.frame_size = FRAMESIZE_UXGA;
-  config.pixel_format = PIXFORMAT_JPEG; // for streaming
+  config.frame_size = FRAMESIZE_XGA;
+  config.pixel_format = PIXFORMAT_JPEG; // For streaming
   config.grab_mode = CAMERA_GRAB_WHEN_EMPTY;
   config.fb_location = CAMERA_FB_IN_PSRAM;
   config.jpeg_quality = 12;
   config.fb_count = 1;
-  
-  // カメラ初期化
+
+  // Initialize the camera
   if (esp_camera_init(&config) != ESP_OK) {
-    Serial.println("カメラ初期化に失敗しました");
+    Serial.println("Camera initialization failed");
     return;
   }
-  Serial.println("カメラ初期化成功");
+  Serial.println("Camera initialized successfully");
+
+  sensor_t * s = esp_camera_sensor_get();
+  // Adjust camera settings if needed
+  s->set_vflip(s, 1); // Flip vertically
+  s->set_brightness(s, 1); // Increase brightness
+  s->set_saturation(s, 0); // Adjust saturation
 }
 
 // Function to authorize account and retrieve the API URL and auth token
@@ -97,7 +109,7 @@ bool b2AuthorizeAccount() {
     String response = http.getString();
     StaticJsonDocument<1024> doc;
     deserializeJson(doc, response);
-    
+
     apiUrl = doc["apiUrl"].as<String>();
     authToken = doc["authorizationToken"].as<String>();
 
@@ -140,14 +152,11 @@ bool b2GetUploadUrl() {
 }
 
 // Function to upload image to B2
-void uploadImageToB2() {
-  camera_fb_t *fb = esp_camera_fb_get();
+void uploadImageToB2(camera_fb_t *fb, String fileName) {
   if (!fb) {
     Serial.println("Failed to capture image");
     return;
   }
-
-  String fileName = getFileName();  // Get the current time-based file name
 
   HTTPClient http;
   http.begin(uploadUrl);
@@ -165,7 +174,49 @@ void uploadImageToB2() {
   }
 
   http.end();
+}
+
+// Handler for the root path "/"
+void handleRoot() {
+  String html = "<html><head><title>ESP32 Camera</title></head><body>";
+  html += "<h1>ESP32 Camera Snapshot</h1>";
+  html += "<img src=\"/capture\" width=\"640\" height=\"480\">";
+  html += "<form action=\"/capture\" method=\"get\">";
+  html += "<input type=\"hidden\" name=\"upload\" value=\"true\">";
+  html += "<input type=\"submit\" value=\"Capture and Upload\">";
+  html += "</form>";
+  html += "</body></html>";
+  server.send(200, "text/html", html);
+}
+
+
+// Handler for capturing and serving the image
+void handleCapture() {
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    server.send(500, "text/plain", "Camera capture failed");
+    return;
+  }
+
+  // Send image as response
+  server.send_P(200, "image/jpeg", (const char *)fb->buf, fb->len);
+
+  // Check if upload is requested
+  if (server.hasArg("upload") && server.arg("upload") == "true") {
+    String fileName = getFileName();  // Get the current time-based file name
+    uploadImageToB2(fb, fileName);
+  }
+
   esp_camera_fb_return(fb);
+}
+
+// Start the web server
+void startCameraServer() {
+  server.on("/", handleRoot);
+  server.on("/capture", handleCapture);
+  server.begin();
+  Serial.println("HTTP server started");
 }
 
 void setup() {
@@ -175,11 +226,14 @@ void setup() {
   initCamera();
 
   if (b2AuthorizeAccount() && b2GetUploadUrl()) {
-    uploadImageToB2();
+    // Start the web server after successful authorization
+    startCameraServer();
+  } else {
+    Serial.println("Failed to authorize B2 account or get upload URL");
   }
 }
 
 void loop() {
-  uploadImageToB2();
-  delay(600000);  // 10 minutes interval (600,000 milliseconds)
+  server.handleClient();
+  delay(100);
 }

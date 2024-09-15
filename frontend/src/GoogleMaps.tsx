@@ -84,7 +84,7 @@ const Map: React.FC = () => {
                         </Button>
                     </form>
                 </Toolbar>
-            </AppBar>
+            </AppBar>dd
 
             {/* 地図表示 */}
             <GoogleMap
