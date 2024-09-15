@@ -8,6 +8,7 @@
 #include "credentials.h"
 #include <time.h>    // For time functions
 #include <WebServer.h> // Web server library
+#include <esp_timer.h> // For timer functionality
 
 String apiUrl;
 String uploadUrl;
@@ -18,6 +19,10 @@ const long gmtOffset_sec = 3600; // Adjust according to your timezone
 const int daylightOffset_sec = 3600;
 
 WebServer server(80); // Create a web server object that listens on port 80
+
+// Variables for periodic capture
+const int captureInterval = 10 * 60 * 100; // Interval in milliseconds (e.g., 10 minutes)
+bool isAuthorized = false; // Flag to indicate if B2 authorization was successful
 
 // WiFi connection function
 void connectToWiFi() {
@@ -107,8 +112,15 @@ bool b2AuthorizeAccount() {
 
   if (httpResponseCode > 0) {
     String response = http.getString();
-    StaticJsonDocument<1024> doc;
-    deserializeJson(doc, response);
+    StaticJsonDocument<2048> doc; // Increased buffer size
+    DeserializationError error = deserializeJson(doc, response);
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      http.end();
+      return false;
+    }
 
     apiUrl = doc["apiUrl"].as<String>();
     authToken = doc["authorizationToken"].as<String>();
@@ -135,8 +147,15 @@ bool b2GetUploadUrl() {
 
   if (httpResponseCode > 0) {
     String response = http.getString();
-    StaticJsonDocument<1024> doc;
-    deserializeJson(doc, response);
+    StaticJsonDocument<2048> doc; // Increased buffer size
+    DeserializationError error = deserializeJson(doc, response);
+
+    if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.f_str());
+      http.end();
+      return false;
+    }
 
     uploadUrl = doc["uploadUrl"].as<String>();
     authToken = doc["authorizationToken"].as<String>();  // Refresh token
@@ -181,14 +200,14 @@ void handleRoot() {
   String html = "<html><head><title>ESP32 Camera</title></head><body>";
   html += "<h1>ESP32 Camera Snapshot</h1>";
   html += "<img src=\"/capture\" width=\"640\" height=\"480\">";
+  html += "<p><a href=\"/\">Refresh Image</a></p>";
   html += "<form action=\"/capture\" method=\"get\">";
   html += "<input type=\"hidden\" name=\"upload\" value=\"true\">";
-  html += "<input type=\"submit\" value=\"Capture and Upload\">";
+  html += "<input type=\"submit\" value=\"Capture and Upload to B2\">";
   html += "</form>";
   html += "</body></html>";
   server.send(200, "text/html", html);
 }
-
 
 // Handler for capturing and serving the image
 void handleCapture() {
@@ -219,21 +238,68 @@ void startCameraServer() {
   Serial.println("HTTP server started");
 }
 
+// Function to capture and upload image automatically
+void captureAndUpload() {
+  if (!isAuthorized) {
+    // Try to authorize and get upload URL
+    isAuthorized = b2AuthorizeAccount() && b2GetUploadUrl();
+    if (!isAuthorized) {
+      Serial.println("Failed to authorize B2 account or get upload URL");
+      return;
+    }
+  }
+
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Failed to capture image");
+    return;
+  }
+
+  String fileName = getFileName();  // Get the current time-based file name
+  uploadImageToB2(fb, fileName);
+
+  esp_camera_fb_return(fb);
+}
+
+// Timer callback function
+void onTimer(void* arg) { // Modified to accept void* argument
+  captureAndUpload();
+}
+
+// Initialize and start the timer
+void initTimer() {
+  esp_timer_create_args_t timerArgs = {};
+  timerArgs.callback = &onTimer;
+  esp_timer_handle_t periodicTimer;
+  esp_err_t err = esp_timer_create(&timerArgs, &periodicTimer);
+  if (err == ESP_OK) {
+    esp_timer_start_periodic(periodicTimer, captureInterval * 1000ULL); // Convert to microseconds
+    Serial.println("Periodic capture timer started");
+  } else {
+    Serial.println("Failed to create timer");
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   connectToWiFi();
   initTime();  // Initialize NTP and get the current time
   initCamera();
 
-  if (b2AuthorizeAccount() && b2GetUploadUrl()) {
-    // Start the web server after successful authorization
-    startCameraServer();
-  } else {
+  // Authorize B2 account and get upload URL
+  isAuthorized = b2AuthorizeAccount() && b2GetUploadUrl();
+  if (!isAuthorized) {
     Serial.println("Failed to authorize B2 account or get upload URL");
   }
+
+  // Start the web server
+  startCameraServer();
+
+  // Initialize and start the periodic capture timer
+  initTimer();
 }
 
 void loop() {
   server.handleClient();
-  delay(100);
+  delay(10); // Adjust delay as needed
 }
