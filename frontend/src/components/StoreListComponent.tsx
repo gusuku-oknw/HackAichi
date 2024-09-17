@@ -2,7 +2,7 @@
 import React from 'react';
 import { List, ListItem, ListItemText, Box, Typography, Avatar } from '@mui/material';
 import { Store } from './types'; // 必要に応じてtypes.tsでStore型を定義
-import { useStyles } from '../styles/StoreListComponentStyles'; // スタイルをインポート
+import { useStyles } from '../styles/useStyles'; // スタイルをインポート
 
 interface StoreListComponentProps {
     stores: Store[]; // Store型の配列
