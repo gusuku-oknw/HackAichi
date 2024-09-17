@@ -30,7 +30,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
 
         try {
             setLoading(true);
-            const response = await sendMessageToApi(store.id, message);
+            const response = await sendMessageToApi(store.id, store.name, store.location, message);
             console.log('送信成功:', response);
             setApiResponse(`店舗ID: ${response.storeId}, メッセージ: ${response.message}`);
             setMessage(''); // メッセージ送信後にフィールドをクリア

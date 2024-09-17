@@ -1,5 +1,10 @@
 // src/api.ts
-export const sendMessageToApi = async (storeId: number, message: string) => {
+export const sendMessageToApi = async (
+    storeId: number,
+    storeName: string,
+    location: { lat: number, lng: number },
+    message: string
+) => {
     try {
         const response = await fetch('http://localhost:5000/api/store-details', {
             method: 'POST',
@@ -8,6 +13,8 @@ export const sendMessageToApi = async (storeId: number, message: string) => {
             },
             body: JSON.stringify({
                 storeId,
+                storeName,
+                location,
                 message,
             }),
         });

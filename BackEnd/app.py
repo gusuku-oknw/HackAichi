@@ -29,17 +29,18 @@ def select_store():
 def receive_store_details():
     data = request.json
     store_id = data.get('storeId')
+    store_name = data.get('storeName')
+    location = data.get('location')
     message = data.get('message')
 
-    # データを処理 (ここでは単純に受信データを返すだけ)
-    print(f"店舗ID: {store_id}, メッセージ: {message}")
+    print(f"店舗ID: {store_id}")
+    print(f"店舗名: {store_name}")
+    print(f"位置情報: 緯度 {location['lat']}, 経度 {location['lng']}")
+    print(f"メッセージ: {message}")
 
-    # 返答
-    return jsonify({
-        "status": "success",
-        "storeId": store_id,
-        "message": message
-    })
+    # 必要な処理をここで実行（データベース保存や処理など）
+
+    return jsonify({"status": "success", "message": "店舗の詳細情報を受け取りました。"})
 
 
 if __name__ == '__main__':
