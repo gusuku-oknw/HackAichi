@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # Reactとの連携を許可するためにCORSを有効にします
+CORS(app)  # CORSを有効にする
 
 # サンプルの店舗データ
 stores = {
@@ -24,26 +24,24 @@ def select_store():
         return jsonify({"error": "店が見つかりませんでした。"}), 404
 
 
-# 対話形式で店の詳細を知る処理
-@app.route('/store_details', methods=['POST'])
-def store_details():
-    data = request.json  # Reactから送られたJSONデータを取得
-    store_id = data.get('store_id')
-    question = data.get('question')  # ユーザーからの質問
+# 店の詳細を受け取るエンドポイント
+@app.route('/api/store-details', methods=['POST'])
+def receive_store_details():
+    data = request.json
+    store_id = data.get('storeId')
+    store_name = data.get('storeName')
+    location = data.get('location')
+    message = data.get('message')
 
-    store = stores.get(store_id)
+    print(f"店舗ID: {store_id}")
+    print(f"店舗名: {store_name}")
+    print(f"位置情報: 緯度 {location['lat']}, 経度 {location['lng']}")
+    print(f"メッセージ: {message}")
 
-    if not store:
-        return jsonify({"error": "店の詳細が見つかりませんでした。"}), 404
+    # 必要な処理をここで実行（データベース保存や処理など）
 
-    # 対話形式の処理 (簡単な例: 質問によって返す情報を変える)
-    if "場所" in question:
-        return jsonify({"response": f"{store['name']}は{store['location']}にあります。"})
-    elif "評価" in question:
-        return jsonify({"response": f"{store['name']}の評価は{store['rating']}です。"})
-    else:
-        return jsonify({"response": f"{store['name']}に関する情報: {store}"})
+    return jsonify({"status": "success", "message": "店舗の詳細情報を受け取りました。"})
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)  # Flaskサーバーを5000ポートで実行

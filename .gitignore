@@ -1,0 +1,3 @@
+./ESP32S3/credentials.h
+frontend/.env
+frontend/.gcloudignore
