@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+from app.services.crowd_service import resp_img_question
+
 app = Flask(__name__)
 CORS(app)  # CORSを有効にする
 
@@ -33,14 +35,10 @@ def receive_store_details():
     location = data.get('location')
     message = data.get('message')
 
-    print(f"店舗ID: {store_id}")
-    print(f"店舗名: {store_name}")
-    print(f"位置情報: 緯度 {location['lat']}, 経度 {location['lng']}")
-    print(f"メッセージ: {message}")
-
-    # 必要な処理をここで実行（データベース保存や処理など）
-
-    return jsonify({"status": "success", "message": "店舗の詳細情報を受け取りました。"})
+    test_name = "image" # 今は店名はこれだけなので
+    dicted_answer = resp_img_question(test_name, message)
+    print(dicted_answer)
+    return jsonify({"status": "success", "storeId": store_id, "message": dicted_answer['評価値']})
 
 
 if __name__ == '__main__':
