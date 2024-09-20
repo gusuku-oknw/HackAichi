@@ -1,12 +1,15 @@
 import requests
 import base64
-import json
 from datetime import datetime
 import os
 from dotenv import load_dotenv
+from pathlib import Path
 
-# .envファイルのパスを指定して読み込む
-load_dotenv('.env')
+# 現在のディレクトリから2つ上の階層にある.envファイルのパスを取得
+env_path = Path(__file__).resolve().parents[2] / '.env'
+
+# .envファイルを読み込む
+load_dotenv(dotenv_path=env_path)
 
 # 環境変数を利用する
 B2_KEY_ID = os.getenv('B2_KEY_ID')
@@ -49,14 +52,14 @@ def get_most_recent_image(api_url, auth_token, bucket_name, store_name):
         print("No files found for store:", store_name)
         return None
 
-    # Extract dates from file names and find the most recent one
     def extract_date(file_name):
-        # Example format: StoreName_YYYYMMDD_HHMM.jpg
+        # Example format: image_YYYYMMDD_HHMMSS.jpg
         try:
             parts = file_name.split('_')
-            date_str = parts[1]
-            time_str = parts[2].split('.')[0]
-            return datetime.strptime(date_str + time_str, '%Y%m%d%H%M')
+            date_str = parts[1]  # YYYYMMDD
+            time_str = parts[2].split('.')[0]  # HHMMSS
+            # Combine date and time and convert to datetime object
+            return datetime.strptime(date_str + time_str, '%Y%m%d%H%M%S')
         except Exception as e:
             print(f"Error extracting date from file name: {file_name}, {e}")
             return None
@@ -72,38 +75,25 @@ def download_file(download_url, auth_token, bucket_name, file_name):
 
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        file_path = file_name  # Save the file with the same name locally
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
-        print(f"File downloaded and saved as {file_path}")
-        return file_path
+        return response.content
     else:
         print("Failed to download file:", response.text)
         return None
 
-def main(store_name):
+def recent_img_dwnld(store_name):
     auth_token, api_url, download_url = authorize_account()
     if auth_token:
         print("Authorized successfully.")
-        #most_recent_image = get_most_recent_image(api_url, auth_token, BUCKET_NAME, store_name) # テスト時はここをコメントアウト
-        most_recent_image = "image.jpg"
+        most_recent_image = get_most_recent_image(api_url, auth_token, BUCKET_NAME, store_name)
         if most_recent_image:
             print(f"Most recent image for {store_name}: {most_recent_image}")
             downloaded_file = download_file(download_url, auth_token, BUCKET_NAME, most_recent_image)
             if downloaded_file:
                 print(f"File {most_recent_image} downloaded successfully.")
+                return downloaded_file
         else:
             print("No images found for the specified store.")
 
 if __name__ == '__main__':
-    store_name = 'CafeBlue'  # Replace with the store name you want to search for
-    main(store_name)
-
-
-# ファイル名形式を変更するときはget_most_recent_imageを変更する
-# Example format: StoreName_YYYYMMDD_HHMM.jpg
-# _で区切る方式だと簡単に情報を抽出できる
-# parts = file_name.split('_')
-# date_str = parts[1]
-# time_str = parts[2].split('.')[0]
-# return datetime.strptime(date_str + time_str, '%Y%m%d%H%M')
+    store_name = 'image'  # Replace with the store name you want to search for
+    recent_img_dwnld(store_name)
