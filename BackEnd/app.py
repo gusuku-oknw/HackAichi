@@ -35,7 +35,7 @@ def receive_store_details():
     location = data.get('location')
     message = data.get('message')
 
-    test_name = "image" # 今は店名はこれだけなので
+    test_name = "image"  # 今は店名はこれだけなので
     dicted_answer = resp_img_question(test_name, message)
     print(dicted_answer)
     return jsonify({"status": "success", "storeId": store_id, "message": dicted_answer['評価値']})

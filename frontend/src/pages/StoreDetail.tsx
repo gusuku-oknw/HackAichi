@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Paper, AppBar, Toolbar, IconButton, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import logo from '../styles/logo.png'
 import { useStyles } from '../styles/useStyles';
 import { sendApiRequest } from '../api';
 
@@ -72,7 +73,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
             </AppBar>
 
             <Box className={classes.logoContainer}>
-                <img src="/logo.png" alt="Cafe Logo" className={classes.logo} />
+                <img src={logo} alt="Cafe Logo" className={classes.logo} />
             </Box>
 
             <Box className={classes.profileHeader}>
