@@ -24,9 +24,8 @@ const buttons = [
 
 const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
     const [message, setMessage] = useState('');
-    const [apiResponse, setApiResponse] = useState<string>(''); // 初期値を空文字に設定
+    const [apiResponse, setApiResponse] = useState<string>('');
     const [loading, setLoading] = useState(false);
-    const [value, setValue] = useState(0);
     const classes = useStyles();
 
     if (!store) {
@@ -56,7 +55,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
     };
 
     const handleBackClick = () => {
-        window.history.back(); // 前のページに戻る
+        window.history.back();
     };
 
     return (
@@ -72,9 +71,9 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                 </Toolbar>
             </AppBar>
 
-            <div className={classes.logoContainer}>
+            <Box className={classes.logoContainer}>
                 <img src="/logo.png" alt="Cafe Logo" className={classes.logo} />
-            </div>
+            </Box>
 
             <Box className={classes.profileHeader}>
                 <Typography variant="h6">{store.name} の詳細情報</Typography>
@@ -91,8 +90,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                             <Button
                                 fullWidth
                                 variant="contained"
-                                color="primary"
-                                className={classes.button}
+                                className={classes.button} // コーヒーテーマのボタンスタイルを適用
                                 onClick={() => handleButtonClick(text)}
                             >
                                 {text}
@@ -109,11 +107,12 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         fullWidth
                         disabled={loading}
+                        className={classes.searchBar} // コーヒーテーマのテキストフィールドスタイルを適用
                     />
                     <Button
                         type="submit"
                         variant="contained"
-                        color="primary"
+                        className={classes.button} // コーヒーテーマのボタンスタイルを適用
                         disabled={loading}
                     >
                         {loading ? '送信中...' : '送信'}

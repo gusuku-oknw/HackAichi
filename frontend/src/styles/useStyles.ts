@@ -1,22 +1,21 @@
 import { makeStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles'; // Theme のインポート
 
-export const useStyles = makeStyles((theme: Theme) => ({
+export const useStyles = makeStyles({
     // Profile.tsx のスタイル
     profileContainer: {
         padding: '20px',
-        backgroundColor: '#F7EFE4', // 背景色を画像に合わせて薄いベージュに変更
+        backgroundColor: '#ECE3D2', // コーヒーのクリームを思わせる薄いベージュ
         minHeight: '100vh',
     },
     profileHeader: {
-        backgroundColor: '#7C5C42', // 画像のヘッダー色（茶色）
+        backgroundColor: '#5D4037', // ダークブラウン（コーヒー色）
         color: 'white',
         padding: '10px 20px',
         display: 'flex',
         alignItems: 'center',
     },
     profileContent: {
-        backgroundColor: 'white',
+        backgroundColor: '#FFF8E1', // コーヒーと相性の良いクリーム色
         padding: '20px',
         marginTop: '10px',
         borderRadius: '10px',
@@ -25,18 +24,22 @@ export const useStyles = makeStyles((theme: Theme) => ({
     avatarLarge: {
         width: 100,
         height: 100,
+        borderRadius: '50%', // 丸いアイコンで親しみやすい印象に
+        border: '4px solid #5D4037', // ダークブラウンの枠線
     },
     profileTitle: {
         textAlign: 'center',
         fontWeight: 'bold',
         marginBottom: '10px',
+        color: '#3E2723', // ダークブラウンの文字色
     },
     profileSubtitle: {
         textAlign: 'center',
         fontWeight: 'bold',
+        color: '#6D4C41', // ライトブラウンの文字色
     },
     profileList: {
-        backgroundColor: '#FBE0B5', // 画像に基づく薄いオレンジ系
+        backgroundColor: '#D7CCC8', // ミルク入りコーヒーのような淡いブラウン
         borderRadius: '10px',
         padding: '10px',
     },
@@ -45,40 +48,45 @@ export const useStyles = makeStyles((theme: Theme) => ({
     container: {
         height: 'calc(100vh - 400px)',
         overflowY: 'auto',
-        backgroundColor: '#F7EFE4', // 全体の背景色を画像と合わせてベージュ系に
+        backgroundColor: '#ECE3D2', // 薄いベージュ
         padding: '16px',
     },
     listItem: {
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
-        backgroundColor: '#C19766', // 画像に合わせたオレンジ系の背景色
-        color: 'white', // テキスト色を白に
+        backgroundColor: '#8D6E63', // コーヒー豆を思わせるブラウン
+        color: 'white',
         marginBottom: '8px',
         borderRadius: '8px',
         '&:hover': {
-            backgroundColor: '#A6784F', // ホバー時に濃いオレンジ系の色
+            backgroundColor: '#6D4C41', // ホバー時にダークブラウン
         },
         '&:active': {
-            backgroundColor: '#8B5F3C', // クリック時にさらに濃いオレンジ系の色
+            backgroundColor: '#5D4037', // クリック時にさらにダークなブラウン
         },
     },
     avatar: {
         width: 56,
         height: 56,
         marginRight: '16px',
+        borderRadius: '50%', // 丸いアバターで柔らかさを演出
     },
     storeInfo: {
-        flex: 1, // 残りのスペースを使用
+        flex: 1,
+        color: '#FFF8E1', // テキストの色をクリーム色に
     },
     appBar: {
-        backgroundColor: '#6C4F3D'
+        backgroundColor: '#4E342E !important', // コーヒーのダークブラウンの背景色
+        color: '#FFF8E1 !important', // クリーム色の文字色
     },
     backButton: {
-        marginRight: '10px'
+        marginRight: '10px',
+        color: '#FFF8E1', // 戻るボタンのアイコンをクリーム色に
     },
     title: {
-        flexGrow: 1
+        flexGrow: 1,
+        color: '#FFF8E1', // タイトルをクリーム色に
     },
     logoContainer: {
         flex: 1,
@@ -89,28 +97,41 @@ export const useStyles = makeStyles((theme: Theme) => ({
     },
     logo: {
         width: '150px',
-        height: '150px'
+        height: '150px',
     },
     buttonContainer: {
         padding: '20px'
     },
     button: {
-        padding: '10px 20px'
+        padding: '10px 20px',
+        backgroundColor: '#6D4C41 !important', // コーヒーブラウンの背景色を強制適用
+        color: '#FFF8E1 !important', // クリーム色の文字色を強制適用
+        '&:hover': {
+            backgroundColor: '#5D4037 !important', // ホバー時にダークブラウン
+        },
+        '&:active': {
+            backgroundColor: '#4E342E !important', // クリック時にさらにダークなブラウン
+        },
     },
     footer: {
         padding: '10px',
-        borderTop: '1px solid #ddd'
+        borderTop: '1px solid #ddd',
+        backgroundColor: '#ECE3D2', // フッター背景を薄いベージュに
     },
     searchBar: {
-        marginBottom: '10px'
+        marginBottom: '10px',
+        backgroundColor: '#FFF8E1', // 検索バーもクリーム色に
+        color: '#4E342E', // 文字色をダークブラウンに
     },
     bottomNav: {
-        marginTop: '10px'
+        marginTop: '10px',
+        backgroundColor: '#4E342E', // ナビゲーションもダークブラウンに
+        color: '#FFF8E1', // アイコンの色をクリーム色に
     },
     form: {
         display: 'flex',
         flexDirection: 'column',
-        gap: theme.spacing(2), // theme.spacingを使用
-        marginTop: theme.spacing(2), // theme.spacingを使用
+        gap: '16px',
+        marginTop: '16px',
     },
-}));
+});

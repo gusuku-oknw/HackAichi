@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
 import { Box, AppBar, Toolbar, TextField, Button } from '@mui/material';
 import { sendApiRequest } from '../api';
+import { useStyles } from '../styles/useStyles';
 import { Store } from './types'; // ここで types.ts から Store をインポート
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_API_KEY ?? '';
@@ -26,6 +27,7 @@ interface GoogleMapComponentProps {
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarkerClick, updateStores }) => {
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const classes = useStyles();
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: GOOGLE_MAPS_API_KEY,
@@ -75,7 +77,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
 
     return (
         <Box style={{color: '#ffffff'}}>
-            <AppBar position="static" style={{ display: 'flex', width: '100%', backgroundColor: '#3f51b5' }}>
+            <AppBar position="static" className={classes.appBar}>
                 <Toolbar style={{ padding: '0 16px' }}>
                     <form onSubmit={handleSearch} style={{ display: 'flex', width: '100%' }}>
                         <TextField
@@ -101,13 +103,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
                             type="submit"
                             color="primary"
                             variant="contained"
-                            style={{
-                                backgroundColor: '#1e88e5',
-                                color: '#fff',
-                                height: '40px',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                textTransform: 'none',
-                            }}
+                            className={classes.button}
                         >
                             Search
                         </Button>
