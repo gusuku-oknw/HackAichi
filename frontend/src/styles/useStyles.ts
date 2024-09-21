@@ -71,4 +71,106 @@ export const useStyles = makeStyles({
     storeInfo: {
         flex: 1, // 残りのスペースを使用
     },
+    // container: {
+    //     fontFamily: 'Arial, sans-serif',
+    //     textAlign: 'center',
+    //     backgroundColor: '#fff',
+    //     height: '100vh',
+    //     display: 'flex',
+    //     flexDirection: 'column',
+    //     justifyContent: 'space-between'
+    // },
+    appBar: {
+        backgroundColor: '#6C4F3D'
+    },
+    backButton: {
+        marginRight: '10px'
+    },
+    title: {
+        flexGrow: 1
+    },
+    logoContainer: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: '20px'
+    },
+    logo: {
+        width: '150px',
+        height: '150px'
+    },
+    buttonContainer: {
+        padding: '20px'
+    },
+    button: {
+        padding: '10px 20px'
+    },
+    footer: {
+        padding: '10px',
+        borderTop: '1px solid #ddd'
+    },
+    searchBar: {
+        marginBottom: '10px'
+    },
+    bottomNav: {
+        marginTop: '10px'
+    }
 });
+
+
+// // スタイル
+// const styles = {
+//     container: {
+//         fontFamily: 'Arial, sans-serif',
+//         textAlign: 'center',
+//         backgroundColor: '#fff',
+//         height: '100vh',
+//         display: 'flex',
+//         flexDirection: 'column',
+//         justifyContent: 'space-between'
+//     },
+//     appBar: {
+//         backgroundColor: '#6C4F3D'
+//     },
+//     backButton: {
+//         marginRight: '10px'
+//     },
+//     title: {
+//         flexGrow: 1
+//     },
+//     logoContainer: {
+//         flex: 1,
+//         display: 'flex',
+//         justifyContent: 'center',
+//         alignItems: 'center',
+//         marginTop: '20px'
+//     },
+//     logo: {
+//         width: '150px',
+//         height: '150px'
+//     },
+//     buttonContainer: {
+//         padding: '20px'
+//     },
+//     button: {
+//         padding: '10px 20px'
+//     },
+//     footer: {
+//         padding: '10px',
+//         borderTop: '1px solid #ddd'
+//     },
+//     searchBar: {
+//         marginBottom: '10px'
+//     },
+//     bottomNav: {
+//         marginTop: '10px'
+//     }
+// };
+
+// style/useStyles.ts
+
+// style/useStyles.ts
+
+
+// style/useStyles.ts
