@@ -105,7 +105,7 @@ def get_crowd_val(storeName="image"):
   question = "Please tell me the congestion level with a number between 1 and 5."+forming
 
   image_content = recent_img_dwnld(storeName)
-  image_content = read_image("/home/tatilin/work/HackAichi/BackEnd/imgs/image_20240917_100218.jpg") # テストコード
+  #image_content = read_image("/home/tatilin/work/HackAichi/BackEnd/imgs/image_20240917_100218.jpg") # テストコード
 
   base64_image = encode_image(image_content)
   response = resp_img_question(question, base64_image)
@@ -119,7 +119,7 @@ def make_answer(key, storeName="image", question_dict=question_dict):
   questions = question_dict[key]
   question_num = len(questions)
   image_content = recent_img_dwnld(storeName)
-  image_content = read_image("/home/tatilin/work/HackAichi/BackEnd/sumple_cafe3.jpg") # テストコード
+  #image_content = read_image("/home/tatilin/work/HackAichi/BackEnd/sumple_cafe3.jpg") # テストコード
   base64_image = encode_image(image_content)
 
   for i in range(question_num):
