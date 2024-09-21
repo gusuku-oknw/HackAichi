@@ -18,7 +18,7 @@ MODEL = "gpt-4o-mini"
 api_key = os.getenv('api_key')
 
 tanteki = "Please answer briefly."
-forming = "Respond to the following question about the next image by filling in the types of evaluations and their values in the following JSON format string (Please answer the value part with short sentences in Japanese.): {'evaluation_name': (), 'evaluation_value': ()}. However, the evaluation value is not necessarily a numerical value, so please return an appropriate value in the appropriate format."
+forming = "Respond to the following question about the next image by filling in the types of evaluations and their values in the following JSON format string (Please answer the value part with short sentences in Japanese.): {'evaluation_name': (), 'evaluation_value': ()}. However, the evaluation value is not necessarily a numerical value, so please return an appropriate value in the appropriate format absolutely."
 def init_question():
   question_dict = {}
   txts = []
@@ -46,14 +46,9 @@ def init_question():
   txts.append("What's the age range of the people using it?"+forming)
   question_dict[3] = txts
 
-  ans_deco_txts = []
-  ans_deco_txts.append("窓際や自然光の入る席は")
-  ans_deco_txts.append("テーブルの広い席は")
-  ans_deco_txts.append("ソファまたは快適な椅子のある席は")
-  ans_deco_txts.append("利用者の年齢層は")
-  return question_dict, ans_deco_txts
+  return question_dict
 
-question_dict, answer_decorate_list = init_question()
+question_dict = init_question()
 
 # Function to encode the image
 def encode_image(img_content):
@@ -111,9 +106,6 @@ def get_crowd_val(storeName="image"):
   response = resp_img_question(question, base64_image)
   dicted_message = response_to_dict(response)
   return int(dicted_message['evaluation_value'])
-
-#def adjust_answer(key, dicted_message):
-
 
 def make_answer(key, storeName="image", question_dict=question_dict):
   questions = question_dict[key]
