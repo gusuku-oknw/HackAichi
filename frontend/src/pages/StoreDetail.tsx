@@ -55,7 +55,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
     };
 
     const handleBackClick = () => {
-        window.history.back();
+        window.location.reload(); // ページをリロード
     };
 
     return (

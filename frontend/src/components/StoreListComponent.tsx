@@ -37,7 +37,7 @@ const StoreListComponent: React.FC<StoreListComponentProps> = ({ stores, onSelec
                         />
                         <Box className={classes.storeInfo}>
                             <Typography variant="h6">{store.name}</Typography>
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography variant="body2" color="#ffffff">
                                 {store.description}
                             </Typography>
                         </Box>
