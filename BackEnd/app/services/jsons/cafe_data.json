@@ -1,0 +1,47 @@
+[
+    {
+        "storeId": "user_1",
+        "storeName": "DEAN & DELUCA 名古屋",
+        "location": {
+            "latitude": 35.1695637,
+            "longitude": 136.8851591
+        },
+        "message": "店内は洗練された雰囲気で、カジュアルに楽しめるおいしいドリンクが提供されています。"
+    },
+    {
+        "storeId": "user_2",
+        "storeName": "Santa Maria Novella Tisaneria Nagoya",
+        "location": {
+            "latitude": 35.1702366,
+            "longitude": 136.8848961
+        },
+        "message": "店内は落ち着いた雰囲気で、透明なティーポットから香り高い紅茶を楽しむことができます。"
+    },
+    {
+        "storeId": "user_3",
+        "storeName": "Komeda's Coffee",
+        "location": {
+            "latitude": 35.1698089,
+            "longitude": 136.8806631
+        },
+        "message": "店内はおしゃれで、さまざまなデザートドリンクが楽しめる雰囲気です。"
+    },
+    {
+        "storeId": "user_4",
+        "storeName": "Komeda's Coffee Uni Mall",
+        "location": {
+            "latitude": 35.1717096,
+            "longitude": 136.8866928
+        },
+        "message": "店内はカジュアルで、ユニークな飲み物メニューを楽しめる雰囲気です。"
+    },
+    {
+        "storeId": "user_5",
+        "storeName": "La maison JOUVAUD KITTE NAGOYA",
+        "location": {
+            "latitude": 35.1730632,
+            "longitude": 136.8822565
+        },
+        "message": "店内はナチュラルな雰囲気で、大きなテーブルと植物が心地よい空間を演出しています。"
+    }
+]
