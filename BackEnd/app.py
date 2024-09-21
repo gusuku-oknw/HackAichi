@@ -14,6 +14,13 @@ stores = {
     3: {"name": "バーC", "location": "名古屋", "rating": 4.2},
 }
 
+template_questions = {
+    "テーブルが広い席はありますか？":1,
+    "ソファーや快適な椅子はありますか？":2,
+    "窓際や自然光が入る席はありますか？":0,
+    "利用されている年齢層の方はどれくらいですか？":3
+}
+
 
 # 店を選ぶ処理
 @app.route('/select_store', methods=['POST'])
@@ -36,14 +43,10 @@ def receive_store_details():
     location = data.get('location')
     message = data.get('message')
     
-    ### テストコード ###
-    try:
-        test_message = int(message)
-    except Exception as e:
-        test_message = 3 # とりあえず質問を固定　後でフロントの形式を調整しつつこれにする。    
-    test_name = "image" # 今は店名はこれだけなので
+    store_name = "image" # 今は店名はこれだけなので
+    message_key = template_questions[message]
     
-    answer = make_answer(test_message, test_name)
+    answer = make_answer(message_key, store_name)
     return jsonify({"status": "success", "storeId": store_id, "message": answer})
 
 
