@@ -17,6 +17,7 @@ B2_APP_KEY = os.getenv('B2_APP_KEY')
 BUCKET_ID = os.getenv('BUCKET_ID')
 BUCKET_NAME = os.getenv('BUCKET_NAME')
 
+
 def authorize_account():
     url = "https://api.backblazeb2.com/b2api/v2/b2_authorize_account"
     credentials = base64.b64encode(f"{B2_KEY_ID}:{B2_APP_KEY}".encode()).decode()
@@ -30,6 +31,7 @@ def authorize_account():
         print("Failed to authorize account:", response.text)
         return None, None, None
 
+
 def list_files(api_url, auth_token, bucket_id):
     url = f"{api_url}/b2api/v2/b2_list_file_names"
     headers = {"Authorization": auth_token}
@@ -42,12 +44,13 @@ def list_files(api_url, auth_token, bucket_id):
         print("Failed to list files:", response.text)
         return []
 
+
 def get_most_recent_image(api_url, auth_token, bucket_name, store_name):
     files = list_files(api_url, auth_token, BUCKET_ID)
-    
+
     # Filter files by store name and sort by date
     relevant_files = [f for f in files if f['fileName'].startswith(store_name)]
-    
+
     if not relevant_files:
         print("No files found for store:", store_name)
         return None
@@ -66,8 +69,9 @@ def get_most_recent_image(api_url, auth_token, bucket_name, store_name):
 
     # Find the file with the most recent date
     most_recent_file = max(relevant_files, key=lambda file: extract_date(file['fileName']))
-    
+
     return most_recent_file['fileName']
+
 
 def download_file(download_url, auth_token, bucket_name, file_name):
     url = f"{download_url}/file/{bucket_name}/{file_name}"
@@ -79,6 +83,7 @@ def download_file(download_url, auth_token, bucket_name, file_name):
     else:
         print("Failed to download file:", response.text)
         return None
+
 
 def recent_img_dwnld(store_name):
     auth_token, api_url, download_url = authorize_account()
@@ -93,6 +98,7 @@ def recent_img_dwnld(store_name):
                 return downloaded_file
         else:
             print("No images found for the specified store.")
+
 
 if __name__ == '__main__':
     store_name = 'image'  # Replace with the store name you want to search for
