@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-from app.services.crowd_service import resp_img_question
+from app.services.crowd_service import make_answer
+#import app.services.img_dwnlder 
 
 app = Flask(__name__)
 CORS(app)  # CORSを有効にする
@@ -34,11 +35,16 @@ def receive_store_details():
     store_name = data.get('storeName')
     location = data.get('location')
     message = data.get('message')
-
+    
+    ### テストコード ###
+    try:
+        test_message = int(message)
+    except Exception as e:
+        test_message = 3 # とりあえず質問を固定　後でフロントの形式を調整しつつこれにする。    
     test_name = "image" # 今は店名はこれだけなので
-    dicted_answer = resp_img_question(test_name, message)
-    print(dicted_answer)
-    return jsonify({"status": "success", "storeId": store_id, "message": dicted_answer['評価値']})
+    
+    answer = make_answer(test_message, test_name)
+    return jsonify({"status": "success", "storeId": store_id, "message": answer})
 
 
 if __name__ == '__main__':
