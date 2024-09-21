@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Paper } from '@mui/material';
 import { useStyles } from '../styles/useStyles'; // スタイルをインポート
-import { sendMessageToApi } from '../api'; // API送信関数をインポート
+import { sendApiRequest } from '../api'; // API送信関数をインポート
 
 interface StoreDetailProps {
     store: {
@@ -30,7 +30,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
 
         try {
             setLoading(true);
-            const response = await sendMessageToApi(store.id, store.name, store.location, message);
+            const response = await sendApiRequest('store-details', store.id, store.name, store.location, message); // 関数名を修正
             console.log('送信成功:', response);
             setApiResponse(`店舗ID: ${response.storeId}, メッセージ: ${response.message}`);
             setMessage(''); // メッセージ送信後にフィールドをクリア
@@ -41,6 +41,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
             setLoading(false); // ローディング状態を終了
         }
     };
+
 
     return (
         <Paper className={classes.profileContainer}>

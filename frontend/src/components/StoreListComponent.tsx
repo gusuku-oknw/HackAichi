@@ -1,6 +1,5 @@
-// src/components/StoreListComponent.tsx
-import React from 'react';
-import { List, ListItem, ListItemText, Box, Typography, Avatar } from '@mui/material';
+import React, { useState } from 'react';
+import { List, ListItem, ListItemText, Box, Typography, Avatar, Drawer } from '@mui/material';
 import { Store } from './types'; // 必要に応じてtypes.tsでStore型を定義
 import { useStyles } from '../styles/useStyles'; // スタイルをインポート
 
@@ -11,33 +10,61 @@ interface StoreListComponentProps {
 
 const StoreListComponent: React.FC<StoreListComponentProps> = ({ stores, onSelectStore }) => {
     const classes = useStyles();
+    const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+
+    const handleSelectStore = (store: Store) => {
+        setSelectedStore(store);
+        onSelectStore(store);
+    };
+
+    const handleClose = () => {
+        setSelectedStore(null);
+    };
 
     return (
-        <Box className={classes.container}>
-            <List>
+        <Box>
+            <List className={classes.container}>
                 {stores.map((store) => (
                     <ListItem
                         key={store.id}
                         className={classes.listItem}
-                        onClick={() => onSelectStore(store)}
+                        onClick={() => handleSelectStore(store)}
                     >
-                        {/* 店舗の外観写真 */}
                         <Avatar
                             alt={store.name}
                             src={store.imageUrl} // 店舗の画像URLを使う
                             className={classes.avatar}
                         />
                         <Box className={classes.storeInfo}>
-                            {/* 店舗名 */}
                             <Typography variant="h6">{store.name}</Typography>
-                            {/* 店舗の概要 */}
                             <Typography variant="body2" color="textSecondary">
-                                {store.description} {/* 店舗の概要を表示 */}
+                                {store.description}
                             </Typography>
                         </Box>
                     </ListItem>
                 ))}
             </List>
+
+            <Drawer
+                anchor="bottom"
+                open={Boolean(selectedStore)}
+                onClose={handleClose}
+                PaperProps={{
+                    style: {
+                        height: '50%', // 画面の半分を覆い尽くす
+                    },
+                }}
+            >
+                {selectedStore && (
+                    <Box p={2}>
+                        <Typography variant="h6">{selectedStore.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">
+                            {selectedStore.description}
+                        </Typography>
+                        {/* 他の店舗情報を表示する部分 */}
+                    </Box>
+                )}
+            </Drawer>
         </Box>
     );
 };

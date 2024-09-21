@@ -1,12 +1,13 @@
 // src/api.ts
-export const sendMessageToApi = async (
+export const sendApiRequest = async (
+    endpoint: string,
     storeId: number,
     storeName: string,
     location: { lat: number, lng: number },
     message: string
 ) => {
     try {
-        const response = await fetch('http://localhost:5000/api/store-details', {
+        const response = await fetch(`http://localhost:5000/api/${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -20,7 +21,7 @@ export const sendMessageToApi = async (
         });
 
         if (!response.ok) {
-            throw new Error('メッセージ送信に失敗しました');
+            throw new Error('APIリクエストに失敗しました');
         }
 
         const data = await response.json();
