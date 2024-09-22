@@ -56,7 +56,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
 
         try {
             const result = await sendApiRequest(
-                'store-search',
+                '/store-search',
                 0,
                 searchQuery,
                 nagoyaStationLocation,

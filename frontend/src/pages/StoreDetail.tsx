@@ -40,7 +40,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
 
         try {
             setLoading(true);
-            const response = await sendApiRequest('store-details', store.id, store.name, store.location, message);
+            const response = await sendApiRequest('/store-details', store.id, store.name, store.location, message);
             console.log('送信成功:', response);
             setApiResponse(`店舗ID: ${response.storeId}, メッセージ: ${response.message}`);
             setMessage('');

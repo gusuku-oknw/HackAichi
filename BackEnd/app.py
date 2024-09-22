@@ -6,7 +6,7 @@ from app.services.analysis import fetch_cafe_data
 
 # import app.services.img_dwnlder
 
-app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
+app = Flask(__name__, static_folder="./build/static", template_folder="./build")
 CORS(app)  # CORSを有効にする
 
 # サンプルの店舗データ
@@ -24,14 +24,14 @@ nagoya_station = {
 
 
 # 店を選ぶ処理
-@app.route('/api/store-search', methods=['POST'])
+@app.route('/store-search', methods=['POST', 'GET'])
 def get_cafes():
     cafe_data = fetch_cafe_data(nagoya_station)
-    return jsonify(cafe_data)
+    return jsonify(cafe_data), 200
 
 
 # 店の詳細を受け取るエンドポイント
-@app.route('/api/store-details', methods=['POST'])
+@app.route('/store-details', methods=['POST', 'GET'])
 def receive_store_details():
     data = request.json
     store_id = data.get('storeId')
@@ -47,7 +47,7 @@ def receive_store_details():
     test_name = "image"  # 今は店名はこれだけなので
 
     answer = make_answer(message, test_name)
-    return jsonify({"status": "success", "storeId": store_id, "message": answer})
+    return jsonify({"status": "success", "storeId": store_id, "message": answer}), 200
 
 
 @app.route('/')
@@ -61,5 +61,5 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Flaskサーバーを5000ポートで実行
+    app.run(debug=True)  # Flaskサーバーを5000ポートで実行
     # app.run(host='0.0.0.0', port=5000)

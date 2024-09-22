@@ -7,7 +7,7 @@ export const sendApiRequest = async (
     message: string
 ) => {
     try {
-        const response = await fetch(`api/${endpoint}`, {
+        const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
