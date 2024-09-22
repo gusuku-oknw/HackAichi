@@ -2,6 +2,10 @@ import { makeStyles } from '@mui/styles';
 
 export const useStyles = makeStyles({
     // Profile.tsx のスタイル
+    root: {
+        width: '100%', // 親要素に対して横幅をフルに使う
+        overflow: 'hidden', // 子要素でスクロールを管理
+    },
     profileContainer: {
         padding: '20px',
         backgroundColor: '#ECE3D2', // コーヒーのクリームを思わせる薄いベージュ

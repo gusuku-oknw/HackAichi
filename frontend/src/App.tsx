@@ -11,19 +11,41 @@ import { Store } from './components/types'; // Store型をインポート
 const initialStores: Store[] = [
     {
         id: 1,
-        name: 'Cafe A',
-        location: { lat: 35.1681309747295, lng: 136.88793880534848 },
-        imageUrl: 'https://example.com/cafe-a.jpg',
-        description: '静かでリラックスできるカフェ。ワークスペースとして最適。',
+        name: 'Cafe Mocha',
+        location: { lat: 35.169108, lng: 136.882635 },
+        imageUrl: 'https://example.com/cafe-mocha.jpg',
+        description: 'クラシックな雰囲気の中で最高のモカが楽しめるカフェ。',
     },
     {
         id: 2,
-        name: 'Shibuya Station',
-        location: { lat: 35.16637931862554, lng: 136.91247207890848 },
-        imageUrl: 'https://example.com/shibuya-station.jpg',
-        description: '名古屋の老舗の美味しい珈琲店です。',
+        name: 'Latte Art Cafe',
+        location: { lat: 35.170001, lng: 136.883751 },
+        imageUrl: 'https://example.com/latte-art-cafe.jpg',
+        description: '芸術的なラテアートと共にゆったりとした時間を過ごせるカフェ。',
+    },
+    {
+        id: 3,
+        name: 'Nagoya Coffee House',
+        location: { lat: 35.171212, lng: 136.884978 },
+        imageUrl: 'https://example.com/nagoya-coffee-house.jpg',
+        description: '落ち着いた雰囲気で、歴史ある老舗のコーヒーを提供。',
+    },
+    {
+        id: 4,
+        name: 'Sunset Cafe',
+        location: { lat: 35.172350, lng: 136.886250 },
+        imageUrl: 'https://example.com/sunset-cafe.jpg',
+        description: '夕焼けを眺めながらリラックスできる、人気のカフェ。',
+    },
+    {
+        id: 5,
+        name: 'Green Leaf Cafe',
+        location: { lat: 35.173412, lng: 136.887512 },
+        imageUrl: 'https://example.com/green-leaf-cafe.jpg',
+        description: '自然に囲まれた心地よい空間で、オーガニックコーヒーを楽しめる。',
     },
 ];
+
 
 // 地図の初期位置
 const center = {
@@ -51,9 +73,13 @@ function App() {
         switch (value) {
             case 0: // ホーム（マップとリスト）
                 return (
-                    <Box>
-                        <GoogleMapComponent stores={stores} onMarkerClick={handleMarkerClick} updateStores={updateStores} />
-                        <StoreListComponent stores={stores} onSelectStore={handleMarkerClick} />
+                    <Box display="flex" flexDirection="column" height="100%" overflow="hidden">
+                        <Box flexGrow={1} overflow="hidden">
+                            <GoogleMapComponent stores={stores} onMarkerClick={handleMarkerClick} updateStores={updateStores} />
+                        </Box>
+                        <Box flexGrow={1} overflow="auto">
+                            <StoreListComponent stores={stores} onSelectStore={handleMarkerClick} />
+                        </Box>
                     </Box>
                 );
             case 1: // 店舗の詳細情報
@@ -66,8 +92,10 @@ function App() {
     };
 
     return (
-        <Box>
-            <Box style={{ marginTop: 16 }}>{renderPageContent()}</Box>
+        <Box display="flex" flexDirection="column" height="100vh" overflow="hidden">
+            <Box flexGrow={1} overflow="hidden" style={{ marginTop: 16 }}>
+                {renderPageContent()}
+            </Box>
 
             {/* ボトムナビゲーションバー */}
             <BottomNavigation

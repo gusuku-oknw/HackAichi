@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, MarkerF, useJsApiLoader } from '@react-google-maps/api';
-import { Box, AppBar, Toolbar, TextField, Button } from '@mui/material';
+import { Box, AppBar, Toolbar, TextField, Button, CircularProgress } from '@mui/material';
 import { sendApiRequest } from '../api';
 import { useStyles } from '../styles/useStyles';
-import { Store } from './types'; // ここで types.ts から Store をインポート
+import { Store } from './types';
 
 const GOOGLE_MAPS_API_KEY = process.env.REACT_APP_API_KEY ?? '';
 
@@ -15,7 +15,7 @@ const containerStyle = {
 const mapOptions = {
     disableDefaultUI: true,
     zoomControl: true,
-    gestureHandling: "greedy", // これで一本指で地図を動かせるようになる
+    gestureHandling: "greedy",
 };
 
 interface GoogleMapComponentProps {
@@ -27,6 +27,7 @@ interface GoogleMapComponentProps {
 const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarkerClick, updateStores }) => {
     const [map, setMap] = useState<google.maps.Map | null>(null);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
     const classes = useStyles();
 
     const { isLoaded } = useJsApiLoader({
@@ -36,15 +37,18 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
     useEffect(() => {
         if (map && stores.length > 0) {
             const bounds = new window.google.maps.LatLngBounds();
-            stores.forEach(({ location }) => bounds.extend(location));
+            stores.forEach(({ location }) => bounds.extend({
+                lat: location.lat,
+                lng: location.lng
+            }));
             map.fitBounds(bounds);
         }
     }, [map, stores]);
 
     const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setLoading(true);
 
-        // 名古屋駅の座標
         const nagoyaStationLocation = {
             lat: 35.170915,
             lng: 136.881537,
@@ -55,28 +59,30 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
                 'store-search',
                 0,
                 searchQuery,
-                nagoyaStationLocation, // 名古屋駅の座標を送信
+                nagoyaStationLocation,
                 ''
             );
 
             if (Array.isArray(result)) {
-                updateStores(result); // 親コンポーネントのstoresを更新
+                updateStores(result);
             } else {
                 console.error('APIから予期しない形式のデータが返されました');
-                updateStores(stores); // 通信エラー時はダミーデータを使用
+                updateStores(stores);
             }
         } catch (error) {
             console.error('検索エラー:', error);
-            updateStores(stores); // 通信エラー時はダミーデータを使用
+            updateStores(stores);
+        } finally {
+            setLoading(false);
         }
     };
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <Box display="flex" justifyContent="center" alignItems="center" height="400px"><CircularProgress /></Box>;
     }
 
     return (
-        <Box style={{color: '#ffffff'}}>
+        <Box style={{ color: '#ffffff' }}>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar style={{ padding: '0 16px' }}>
                     <form onSubmit={handleSearch} style={{ display: 'flex', width: '100%' }}>
@@ -110,20 +116,30 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
                     </form>
                 </Toolbar>
             </AppBar>
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                options={mapOptions}
-                onLoad={(map) => setMap(map)}
-            >
-                {stores.map(store => (
-                    <MarkerF
-                        key={store.id}
-                        position={store.location}
-                        label={store.name}
-                        onClick={() => onMarkerClick(store)} // マーカーがクリックされたときにAPIリクエストを送信
-                    />
-                ))}
-            </GoogleMap>
+
+            {loading ? (
+                <Box display="flex" justifyContent="center" alignItems="center" height="400px">
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    options={mapOptions}
+                    onLoad={(map) => setMap(map)}
+                >
+                    {stores.map(store => (
+                        <MarkerF
+                            key={store.id}
+                            position={{
+                                lat: store.location.lat,
+                                lng: store.location.lng
+                            }}
+                            label={store.name}
+                            onClick={() => onMarkerClick(store)}
+                        />
+                    ))}
+                </GoogleMap>
+            )}
         </Box>
     );
 };

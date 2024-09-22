@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { List, ListItem, ListItemText, Box, Typography, Avatar, Drawer } from '@mui/material';
+import { List, ListItem, Typography, Avatar, Box, Drawer } from '@mui/material';
 import { Store } from './types'; // 必要に応じてtypes.tsでStore型を定義
 import { useStyles } from '../styles/useStyles'; // スタイルをインポート
 
@@ -22,7 +22,7 @@ const StoreListComponent: React.FC<StoreListComponentProps> = ({ stores, onSelec
     };
 
     return (
-        <Box>
+        <Box className={classes.root}>
             <List className={classes.container}>
                 {stores.map((store) => (
                     <ListItem
@@ -52,6 +52,7 @@ const StoreListComponent: React.FC<StoreListComponentProps> = ({ stores, onSelec
                 PaperProps={{
                     style: {
                         height: '50%', // 画面の半分を覆い尽くす
+                        overflowY: 'auto', // スクロールを可能にする
                     },
                 }}
             >

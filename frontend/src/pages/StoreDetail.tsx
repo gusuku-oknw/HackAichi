@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Paper, AppBar, Toolbar, IconButton, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import logo from '../styles/logo.png'
+import NoStoreSelected from "./NoStoreSelected";
 import { useStyles } from '../styles/useStyles';
 import { sendApiRequest } from '../api';
 
@@ -30,7 +31,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
     const classes = useStyles();
 
     if (!store) {
-        return <p>店舗が選択されていません。</p>;
+        return <NoStoreSelected />
     }
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

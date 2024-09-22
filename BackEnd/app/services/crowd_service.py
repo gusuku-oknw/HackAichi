@@ -16,7 +16,7 @@ env_path = Path(__file__).resolve().parents[2] / '.env'
 # .envファイルを読み込む
 load_dotenv(dotenv_path=env_path)
 MODEL = "gpt-4o-mini"
-api_key = os.getenv('api_key')
+api_key = os.getenv('OPENAI_API_KEY')
 
 tanteki = "Please answer briefly."
 forming = "Respond to the following question about the next image by filling in the types of evaluations and their values in the following JSON format string (Please answer the value part with short sentences in Japanese.): {'evaluation_name': (), 'evaluation_value': ()}. However, the evaluation value is not necessarily a numerical value, so please return an appropriate value in the appropriate format."

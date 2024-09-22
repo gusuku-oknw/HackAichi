@@ -2,17 +2,22 @@ import json
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+from pathlib import Path
 
+
+env_path = Path(__file__).resolve().parents[2] / '.env'
 # .env ファイルから環境変数を読み込む
-load_dotenv('.env')
+load_dotenv(dotenv_path=env_path)
 
 # OpenAI APIキーを設定
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 
 # カフェデータを読み込む
 def load_cafe_data(filename):
     with open(filename, 'r', encoding='utf-8') as f:
         return json.load(f)
+
 
 # GPT-4 Turbo with vision を使って画像を解析
 def analyze_image_with_gpt(url1, url2, url3, url4, url5):
@@ -49,8 +54,10 @@ def analyze_image_with_gpt(url1, url2, url3, url4, url5):
         print(f"画像解析エラー: {e}")
         return "解析エラー"
 
+
 # カフェデータを読み込み、各カフェの分析結果を生成
-def analyze_cafes(input_filename='app/services/jsons/nagoya_cafes.json', save_directory='output', output_filename='cafes_analysis_without_photos.json'):
+def analyze_cafes(input_filename='app/services/jsons/nagoya_cafes.json', save_directory='output',
+                  output_filename='cafes_analysis_without_photos.json'):
     cafes = load_cafe_data(input_filename)
     cafe_analysis_list = []
 
@@ -85,6 +92,7 @@ def analyze_cafes(input_filename='app/services/jsons/nagoya_cafes.json', save_di
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(cafe_analysis_list, f, ensure_ascii=False, indent=4)
     print(f"分析結果が '{filepath}' に保存されました。")
+
 
 if __name__ == "__main__":
     # 入力ファイル名、保存先ディレクトリ、保存ファイル名を指定
