@@ -1,10 +1,10 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
 from app.services.crowd_service import make_answer
 #import app.services.img_dwnlder 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
 CORS(app)  # CORSを有効にする
 
 # サンプルの店舗データ
@@ -47,5 +47,11 @@ def receive_store_details():
     return jsonify({"status": "success", "storeId": store_id, "message": answer})
 
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Flaskサーバーを5000ポートで実行
+    # app.run(host='0.0.0.0', port=5000)
