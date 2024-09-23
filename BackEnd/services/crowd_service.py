@@ -5,16 +5,14 @@ import ast
 import re
 
 from dotenv import load_dotenv
-from pathlib import Path
 
-from app.services.img_dwnlder import recent_img_dwnld
+from BackEnd.services import img_dwnlder
+
 
 # from img_dwnlder import recent_img_dwnld # テストコード
 
-# 現在のディレクトリから2つ上の階層にある.envファイルのパスを取得
-env_path = Path(__file__).resolve().parents[2] / '.env'
 # .envファイルを読み込む
-load_dotenv(dotenv_path=env_path)
+load_dotenv()  # .envファイルをロードする
 MODEL = "gpt-4o-mini"
 api_key = os.getenv('OPENAI_API_KEY')
 
@@ -28,7 +26,8 @@ def init_question():
     txts.append("Are there any seats by the window or where natural light comes in within the image?")
     txts.append("Are there any seats occupied by people among the seats you just found?")
     txts.append("Additionally, are there any seats with something on the table?")
-    txts.append("Are there any seats by the window with natural light, where no one is sitting and nothing is on the table?" + forming)
+    txts.append(
+        "Are there any seats by the window with natural light, where no one is sitting and nothing is on the table?" + forming)
     question_dict[0] = txts
 
     txts = []
@@ -42,7 +41,8 @@ def init_question():
     txts.append("Are there seats with sofas or comfortable chairs in the image?")
     txts.append("Are there any seats occupied by people among the seats you just found?")
     txts.append("Are there any seats with something on the table?")
-    txts.append("Are there any seats with sofas or comfortable chairs that are unoccupied and have nothing on the table?" + forming)
+    txts.append(
+        "Are there any seats with sofas or comfortable chairs that are unoccupied and have nothing on the table?" + forming)
     question_dict[2] = txts
 
     txts = []
@@ -91,7 +91,7 @@ def resp_img_question(question, base64_image, retries=3):
             response.raise_for_status()
             return response
         except requests.exceptions.RequestException as e:
-            print(f"Attempt {attempt+1} failed: {e}")
+            print(f"Attempt {attempt + 1} failed: {e}")
             if attempt == retries - 1:
                 raise
 
@@ -116,11 +116,10 @@ def response_to_dict(response):
         return {"error": f"Failed to parse response: {str(e)}"}
 
 
-
 def get_crowd_val(storeName="image"):
     question = "Please tell me the congestion level with a number between 1 and 5." + forming
 
-    image_content = recent_img_dwnld(storeName)
+    image_content = img_dwnlder.recent_img_dwnld(storeName)
     # image_content = read_image("/home/tatilin/work/HackAichi/BackEnd/imgs/image_20240917_100218.jpg") # テストコード
 
     base64_image = encode_image(image_content)
@@ -163,7 +162,7 @@ def make_answer(key_or_text, storeName="image", question_dict=question_dict):
     print("Questions to ask:", questions)  # デバッグ用に質問リストを表示
 
     try:
-        image_content = recent_img_dwnld(storeName)
+        image_content = img_dwnlder.recent_img_dwnld(storeName)
         base64_image = encode_image(image_content)
     except Exception as e:
         print(f"Error downloading or encoding image: {e}")
@@ -188,7 +187,7 @@ def make_answer(key_or_text, storeName="image", question_dict=question_dict):
     return answers
 
 
-if __name__ == '__main__':
-    print(get_crowd_val("image"))
-    # print(resp_img_question("image", "honyanay"))
-    pass
+# if __name__ == '__main__':
+#     print(get_crowd_val("image"))
+#     # print(resp_img_question("image", "honyanay"))
+#     pass

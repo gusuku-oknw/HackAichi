@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
-from app.services.crowd_service import make_answer
-from app.services.analysis import fetch_cafe_data
-
+# from BackEnd.services.crowd_service import make_answer
+from BackEnd.services import analysis
+from BackEnd.services import crowd_service
 # import app.services.img_dwnlder
 
-app = Flask(__name__, static_folder="./build/static", template_folder="./build")
-CORS(app)  # CORSを有効にする
+application = Flask(__name__, static_folder="../frontend/build/static", template_folder="../frontend/build")
+CORS(application)  # CORSを有効にする
 
 # サンプルの店舗データ
 stores = {
@@ -23,43 +23,61 @@ nagoya_station = {
 }
 
 
+@application.route('/api/test', methods=['GET'])
+def test():
+    return jsonify({"message": "Hello, world!"}), 200
+
+
 # 店を選ぶ処理
-@app.route('/store-search', methods=['POST', 'GET'])
+@application.route('/api/store-search', methods=['POST', 'GET'])
 def get_cafes():
-    cafe_data = fetch_cafe_data(nagoya_station)
+    try:
+        cafe_data = analysis.fetch_cafe_data(nagoya_station)
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Failed to fetch cafe data: {str(e)}"}), 500
+
     return jsonify(cafe_data), 200
 
 
 # 店の詳細を受け取るエンドポイント
-@app.route('/store-details', methods=['POST', 'GET'])
+@application.route('/api/store-details', methods=['POST', 'GET'])
 def receive_store_details():
-    data = request.json
-    store_id = data.get('storeId')
-    store_name = data.get('storeName')
-    location = data.get('location')
-    message = data.get('message')
+    try:
+        if not request.is_json:
+            return jsonify({"status": "error", "message": "Invalid JSON format"}), 400
 
-    ### テストコード ###
-    # try:
-    #     test_message = int(message)
-    # except Exception as e:
-    #     test_message = 3 # とりあえず質問を固定　後でフロントの形式を調整しつつこれにする。
-    test_name = "image"  # 今は店名はこれだけなので
+        data = request.json
+        store_id = data.get('storeId')
+        store_name = data.get('storeName')
+        location = data.get('location')
+        message = data.get('message')
 
-    answer = make_answer(message, test_name)
-    return jsonify({"status": "success", "storeId": store_id, "message": answer}), 200
+        if not all([store_id, store_name, location, message]):
+            return jsonify({"status": "error", "message": "Missing required fields"}), 400
+
+        test_name = "image"
+
+        try:
+            answer = crowd_service.make_answer(message, test_name)
+        except Exception as e:
+            return jsonify({"status": "error", "message": f"Failed to generate answer: {str(e)}"}), 500
+
+        return jsonify({"status": "success", "storeId": store_id, "message": answer}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Internal server error: {str(e)}"}), 500
 
 
-@app.route('/')
+@application.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    return "Page not found", 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     return jsonify({"status": "error", "message": "Resource not found"}), 404
 
 
 if __name__ == '__main__':
-    app.run(debug=True)  # Flaskサーバーを5000ポートで実行
+    application.run(debug=True)  # Flaskサーバーを5000ポートで実行
     # app.run(host='0.0.0.0', port=5000)

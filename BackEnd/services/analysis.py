@@ -2,10 +2,11 @@ import requests
 import os
 from dotenv import load_dotenv
 import json
-from app.services.chatgpt_analysis import analyze_image_with_gpt
+from BackEnd.services import chatgpt_analysis
+
 
 # .env ファイルから環境変数を読み込む
-load_dotenv('.env')
+load_dotenv()
 
 # Google Maps APIキーを環境変数から取得
 GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
@@ -79,7 +80,7 @@ def fetch_cafe_data_save(current_location, save_directory='data', filename='cafe
         photo_urls = [get_photo_url(photo['photo_reference'], GOOGLE_MAPS_API_KEY) for photo in photos[:5]]
 
         # 画像のURLを解析
-        analysis_result = analyze_image_with_gpt(*photo_urls[:5])
+        analysis_result = chatgpt_analysis.analyze_image_with_gpt(*photo_urls[:5])
 
         # カフェ情報を追加（写真も含む）
         cafe_data = {
@@ -117,7 +118,7 @@ def fetch_cafe_data(current_location):
         photo_urls = [get_photo_url(photo['photo_reference'], GOOGLE_MAPS_API_KEY) for photo in photos[:5]]
 
         # 画像のURLを解析
-        analysis_result = analyze_image_with_gpt(*photo_urls[:5])
+        analysis_result = chatgpt_analysis.analyze_image_with_gpt(*photo_urls[:5])
 
         # カフェ情報を追加（写真も含む）
         cafe_data = {
@@ -136,8 +137,8 @@ def fetch_cafe_data(current_location):
     return cafe_data_list
 
 
-if __name__ == "__main__":
-    # 保存先のディレクトリとファイル名を指定
-    save_directory = 'app/services/jsons'  # 保存先のディレクトリ名
-    filename = 'cafe_data.json'  # 保存するファイル名
-    fetch_cafe_data()
+# if __name__ == "__main__":
+#     # 保存先のディレクトリとファイル名を指定
+#     save_directory = 'app/services/jsons'  # 保存先のディレクトリ名
+#     filename = 'cafe_data.json'  # 保存するファイル名
+#     fetch_cafe_data()

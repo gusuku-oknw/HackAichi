@@ -1,0 +1,7 @@
+runtime: python311
+entrypoint: gunicorn -w 3 -b :$PORT --timeout 120 BackEnd.app:application
+
+env: standard
+instance_class: F1
+automatic_scaling:
+  max_instances: 1  # 必要に応じてスケールする最大インスタンス数

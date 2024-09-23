@@ -67,6 +67,7 @@ const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({ stores, onMarke
                 updateStores(result);
             } else {
                 console.error('APIから予期しない形式のデータが返されました');
+                console.error(result);
                 updateStores(stores);
             }
         } catch (error) {

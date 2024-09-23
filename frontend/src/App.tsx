@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { LocationOn, Info, AccountCircle } from '@mui/icons-material';
 import StoreDetail from './pages/StoreDetail';

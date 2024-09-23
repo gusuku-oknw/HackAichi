@@ -3,13 +3,9 @@ import base64
 from datetime import datetime
 import os
 from dotenv import load_dotenv
-from pathlib import Path
-
-# 現在のディレクトリから2つ上の階層にある.envファイルのパスを取得
-env_path = Path(__file__).resolve().parents[2] / '.env'
 
 # .envファイルを読み込む
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
 # 環境変数を利用する
 B2_KEY_ID = os.getenv('B2_KEY_ID')
@@ -100,6 +96,6 @@ def recent_img_dwnld(store_name):
             print("No images found for the specified store.")
 
 
-if __name__ == '__main__':
-    store_name = 'image'  # Replace with the store name you want to search for
-    recent_img_dwnld(store_name)
+# if __name__ == '__main__':
+#     store_name = 'image'  # Replace with the store name you want to search for
+#     recent_img_dwnld(store_name)

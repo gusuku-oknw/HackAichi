@@ -1,16 +1,50 @@
 // src/Profile.tsx
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Box, Avatar, Typography, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { useStyles } from '../styles/useStyles'; // 統合したスタイルをインポート
 
 const Profile = () => {
     const classes = useStyles(); // スタイルのフックを使用
+    const [message, setMessage] = useState('');
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                // バックエンドにGETリクエストを送信
+                const response = await fetch('/api/test', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log(response)
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data from the server.');
+                }
+
+                const responseData = await response.json();
+
+                if (responseData.error) {
+                    console.error('Error from server:', responseData);
+                } else {
+                    console.log('Data fetched successfully:', responseData);
+                    setMessage(responseData.message); // 取得したデータを状態にセット
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData(); // 非同期関数を呼び出す
+    }, []); // 空の依存配列で、コンポーネントのマウント時にのみ実行
 
     return (
         <Box className={classes.profileContainer}>
             {/* ヘッダー部分 */}
             <Box className={classes.profileHeader}>
                 <Typography variant="h6">Profile</Typography>
+                <p>{message}</p>
             </Box>
 
             {/* プロフィール内容 */}

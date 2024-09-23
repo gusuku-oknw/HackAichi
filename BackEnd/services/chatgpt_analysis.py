@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 
-
-env_path = Path(__file__).resolve().parents[2] / '.env'
 # .env ファイルから環境変数を読み込む
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
 # OpenAI APIキーを設定
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -94,11 +92,11 @@ def analyze_cafes(input_filename='app/services/jsons/nagoya_cafes.json', save_di
     print(f"分析結果が '{filepath}' に保存されました。")
 
 
-if __name__ == "__main__":
-    # 入力ファイル名、保存先ディレクトリ、保存ファイル名を指定
-    input_filename = 'app/services/jsons/nagoya_cafes.json'  # 入力ファイルのパス
-    save_directory = 'my_output_folder'  # 保存先のディレクトリ名
-    output_filename = 'nagoya_cafes_analysis.json'  # 保存するファイル名
-
-    # 関数を呼び出して解析を実行
-    analyze_cafes(input_filename, save_directory, output_filename)
+# if __name__ == "__main__":
+#     # 入力ファイル名、保存先ディレクトリ、保存ファイル名を指定
+#     input_filename = 'app/services/jsons/nagoya_cafes.json'  # 入力ファイルのパス
+#     save_directory = 'my_output_folder'  # 保存先のディレクトリ名
+#     output_filename = 'nagoya_cafes_analysis.json'  # 保存するファイル名
+#
+#     # 関数を呼び出して解析を実行
+#     analyze_cafes(input_filename, save_directory, output_filename)

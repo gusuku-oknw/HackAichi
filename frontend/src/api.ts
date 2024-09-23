@@ -7,7 +7,7 @@ export const sendApiRequest = async (
     message: string
 ) => {
     try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(`/api${endpoint}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -19,6 +19,8 @@ export const sendApiRequest = async (
                 message,
             }),
         });
+
+        console.log(response)
 
         if (!response.ok) {
             throw new Error('APIリクエストに失敗しました');
