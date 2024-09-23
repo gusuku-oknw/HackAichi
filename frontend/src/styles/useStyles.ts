@@ -6,6 +6,21 @@ export const useStyles = makeStyles({
         width: '100%', // 親要素に対して横幅をフルに使う
         overflow: 'hidden', // 子要素でスクロールを管理
     },
+    bottomNav: {
+        position: 'fixed',
+        bottom: 0,
+        width: '100%',
+        backgroundColor: '#ffffff !important', // 画像の背景色に似た薄いベージュ色
+        height: 56, // 高さを指定して中央揃え
+    },
+    navAction: {
+        minWidth: 0, // アイコンが中央に来るように最小幅を調整
+        maxWidth: '100%',
+        color: '#666666 !important', // デフォルトのアイコンカラー
+        '&.Mui-selected': {
+            color: '#6D4C41 !important', // 選択されたアイコンのカラー（緑）
+        },
+    },
     profileContainer: {
         padding: '20px',
         backgroundColor: '#ECE3D2', // コーヒーのクリームを思わせる薄いベージュ
@@ -126,11 +141,6 @@ export const useStyles = makeStyles({
         marginBottom: '10px',
         backgroundColor: '#FFF8E1', // 検索バーもクリーム色に
         color: '#4E342E', // 文字色をダークブラウンに
-    },
-    bottomNav: {
-        marginTop: '10px',
-        backgroundColor: '#4E342E', // ナビゲーションもダークブラウンに
-        color: '#FFF8E1', // アイコンの色をクリーム色に
     },
     form: {
         display: 'flex',

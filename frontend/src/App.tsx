@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import GoogleMapComponent from './components/GoogleMapComponent';
 import StoreListComponent from './components/StoreListComponent';
 import { Store } from './components/types'; // Store型をインポート
+import { useStyles } from './styles/useStyles';
 
 // 初期の店舗データ
 const initialStores: Store[] = [
@@ -19,28 +20,28 @@ const initialStores: Store[] = [
     {
         id: 2,
         name: 'Latte Art Cafe',
-        location: { lat: 35.170001, lng: 136.883751 },
+        location: { lat: 35.173089791219695 , lng: 136.89013162195923 },
         imageUrl: 'https://example.com/latte-art-cafe.jpg',
         description: '芸術的なラテアートと共にゆったりとした時間を過ごせるカフェ。',
     },
     {
         id: 3,
         name: 'Nagoya Coffee House',
-        location: { lat: 35.171212, lng: 136.884978 },
+        location: { lat: 35.168901229643794,  lng: 136.87914283955078 },
         imageUrl: 'https://example.com/nagoya-coffee-house.jpg',
         description: '落ち着いた雰囲気で、歴史ある老舗のコーヒーを提供。',
     },
     {
         id: 4,
         name: 'Sunset Cafe',
-        location: { lat: 35.172350, lng: 136.886250 },
+        location: { lat: 35.17403392481538,  lng: 136.88553039183554 },
         imageUrl: 'https://example.com/sunset-cafe.jpg',
         description: '夕焼けを眺めながらリラックスできる、人気のカフェ。',
     },
     {
         id: 5,
         name: 'Green Leaf Cafe',
-        location: { lat: 35.173412, lng: 136.887512 },
+        location: { lat: 35.16400418239972,  lng: 136.8798283182625 },
         imageUrl: 'https://example.com/green-leaf-cafe.jpg',
         description: '自然に囲まれた心地よい空間で、オーガニックコーヒーを楽しめる。',
     },
@@ -57,6 +58,7 @@ function App() {
     const [value, setValue] = useState(0); // ページ切り替え用のstate
     const [selectedStore, setSelectedStore] = useState<Store | null>(null); // 選択されたストアの状態
     const [stores, setStores] = useState<Store[]>(initialStores); // 初期値としてダミーデータを設定
+    const classes = useStyles();
 
     // マーカーまたはリストアイテムがクリックされた際の処理
     const handleMarkerClick = (store: Store) => {
@@ -103,12 +105,12 @@ function App() {
                 onChange={(event, newValue) => {
                     setValue(newValue);
                 }}
+                className={classes.bottomNav}
                 showLabels
-                style={{ position: 'fixed', bottom: 0, width: '100%' }}
             >
-                <BottomNavigationAction label="Home" icon={<LocationOn />} />
-                <BottomNavigationAction label="Details" icon={<Info />} />
-                <BottomNavigationAction label="Profile" icon={<AccountCircle />} />
+                <BottomNavigationAction label="Home" icon={<LocationOn />} className={classes.navAction} />
+                <BottomNavigationAction label="Details" icon={<Info />} className={classes.navAction} />
+                <BottomNavigationAction label="Profile" icon={<AccountCircle />} className={classes.navAction} />
             </BottomNavigation>
         </Box>
     );

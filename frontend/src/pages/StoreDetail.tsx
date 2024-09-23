@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Paper, AppBar, Toolbar, IconButton, Grid } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import MessageIcon from '@mui/icons-material/Message';
+import InputAdornment from '@mui/material/InputAdornment';
 import logo from '../styles/logo.png'
 import NoStoreSelected from "./NoStoreSelected";
 import { useStyles } from '../styles/useStyles';
@@ -42,7 +45,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
             setLoading(true);
             const response = await sendApiRequest('/store-details', store.id, store.name, store.location, message);
             console.log('送信成功:', response);
-            setApiResponse(`店舗ID: ${response.storeId}, メッセージ: ${response.message}`);
+            setApiResponse(response.message);
             setMessage('');
         } catch (error) {
             console.error('送信失敗:', error);
@@ -73,26 +76,49 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                 </Toolbar>
             </AppBar>
 
-            <Box className={classes.logoContainer}>
+            <Box className={classes.logoContainer} mb={2} display="flex" justifyContent="center">
                 <img src={logo} alt="Cafe Logo" className={classes.logo} />
             </Box>
 
-            <Box className={classes.profileHeader}>
-                <Typography variant="h6">{store.name} の詳細情報</Typography>
+            {apiResponse && (
+                <Box
+                    marginTop={2}    // 上部に余白を追加
+                    padding={2}      // 内部パディングを設定
+                    bgcolor="#f5f5f5"
+                    borderRadius={8}
+                    boxShadow={2}
+                    display="flex"
+                    alignItems="center"
+                    marginBottom={2}  // 下部にも余白を追加
+                >
+                    <Box marginRight={2}>
+                        <ChatBubbleOutlineIcon style={{ color: '#3f51b5', fontSize: '2rem' }} />
+                    </Box>
+                    <Typography variant="body1" color="textPrimary">
+                        {apiResponse}
+                    </Typography>
+                </Box>
+            )}
+
+            <Box className={classes.profileHeader} px={3} py={2}>
+                <Typography variant="h6" gutterBottom> {/* `gutterBottom`を追加して下部に余白を持たせる */}
+                    {store.name} の詳細情報
+                </Typography>
             </Box>
 
-            <Box className={classes.profileContent}>
-                <Typography variant="body1">
+
+            <Box className={classes.profileContent} px={3} pb={3} textAlign="center">
+                <Typography variant="body1" mb={2}>
                     場所: {store.location.lat}, {store.location.lng}
                 </Typography>
 
                 <Grid container spacing={2} justifyContent="center" className={classes.buttonContainer}>
                     {buttons.map((text, index) => (
-                        <Grid item xs={12} sm={6} key={index}>
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                             <Button
                                 fullWidth
                                 variant="contained"
-                                className={classes.button} // コーヒーテーマのボタンスタイルを適用
+                                className={classes.button}
                                 onClick={() => handleButtonClick(text)}
                             >
                                 {text}
@@ -101,7 +127,7 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                     ))}
                 </Grid>
 
-                <form onSubmit={handleSubmit} className={classes.form}>
+                <form onSubmit={handleSubmit} className={classes.form} style={{ marginTop: '20px' }}>
                     <TextField
                         label="メッセージを入力してください"
                         variant="outlined"
@@ -109,25 +135,25 @@ const StoreDetail: React.FC<StoreDetailProps> = ({ store }) => {
                         onChange={(e) => setMessage(e.target.value)}
                         fullWidth
                         disabled={loading}
-                        className={classes.searchBar} // コーヒーテーマのテキストフィールドスタイルを適用
+                        className={classes.searchBar}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <MessageIcon />
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                     <Button
                         type="submit"
                         variant="contained"
-                        className={classes.button} // コーヒーテーマのボタンスタイルを適用
+                        className={classes.button}
                         disabled={loading}
+                        style={{ marginTop: '10px' }}
                     >
                         {loading ? '送信中...' : '送信'}
                     </Button>
                 </form>
-
-                {apiResponse && (
-                    <Box marginTop={2}>
-                        <Typography variant="body1" color="secondary">
-                            {apiResponse}
-                        </Typography>
-                    </Box>
-                )}
             </Box>
         </Paper>
     );
