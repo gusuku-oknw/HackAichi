@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { LocationOn, Info, AccountCircle } from '@mui/icons-material';
 import StoreDetail from './pages/StoreDetail';
@@ -47,12 +47,6 @@ const initialStores: Store[] = [
     },
 ];
 
-
-// 地図の初期位置
-const center = {
-    lat: 35.1681,
-    lng: 136.8879,
-};
 
 function App() {
     const [value, setValue] = useState(0); // ページ切り替え用のstate
