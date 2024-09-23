@@ -17,7 +17,7 @@ MODEL = "gpt-4o-mini"
 api_key = os.getenv('OPENAI_API_KEY')
 
 tanteki = "Please answer briefly."
-forming = "Respond to the following question about the next image by filling in the types of evaluations and their values in the following JSON format string (Please answer the value part with short sentences in Japanese.): {'evaluation_name': (), 'evaluation_value': ()}. However, the evaluation value is not necessarily a numerical value, so please return an appropriate value in the appropriate format."
+forming = "Respond to the following question about the next image by filling in the types of evaluations and their values in the following JSON format string (Please answer the value part with short polite sentences in Japanese.): {'evaluation_name': (), 'evaluation_value': ()}. However, the evaluation value is not necessarily a numerical value, so please return an appropriate value in the appropriate format."
 
 
 def init_question():
