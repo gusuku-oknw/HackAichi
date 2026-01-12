@@ -1,198 +1,221 @@
-# HotAICafe - リアルタイムカフェ空席モニタリングシステム
+# HotAICafe - パーソナライズ化したカフェ提案アプリ
 
-ESP32-S3搭載センサーが席の利用状況を検知し、AIによるパーソナライズ表示とマイコンによるリアルタイム通信で、空席情報を可視化するシステムです。
+HotAICafe は、**チャット形式の対話を通じてユーザーの好みを分析し、リアルタイムに取得したカフェの状況をもとに、AI がパーソナライズされた提案を行うアプリケーション**です。
+
+ESP32-S3 搭載センサーによるリアルタイムな空席・混雑状況の取得と、OpenAI ChatGPT API を活用した対話型 AI を組み合わせることで、その時点の状況に適した席・利用方法を提示します。
+
+## アプリ画面
+
+<p align="center">
+  <img src="images/HotAICafe_titile.jpg" alt="アプリのメイン画面" width="600">
+</p>
 
 ## 目次
 
 1. [概要](#概要)
-2. [機能](#機能)
-3. [アーキテクチャ](#アーキテクチャ)
-4. [リポジトリ構成](#リポジトリ構成)
-5. [前提環境](#前提環境)
-6. [セットアップ＆インストール](#セットアップインストール)
-
+2. [主な特徴](#主な特徴)
+3. [機能](#機能)
+4. [アーキテクチャ](#アーキテクチャ)
+5. [リポジトリ構成](#リポジトリ構成)
+6. [前提環境](#前提環境)
+7. [セットアップ＆インストール](#セットアップインストール)
    1. [ESP32-S3 ファームウェア](#esp32-s3-ファームウェア)
    2. [バックエンドサーバ](#バックエンドサーバ)
    3. [フロントエンドアプリ](#フロントエンドアプリ)
-7. [使い方](#使い方)
-8. [設定項目](#設定項目)
-9. [今後の改善予定](#今後の改善予定)
-10. [貢献者](#貢献者)
-11. [連絡先](#連絡先)
+8. [使い方](#使い方)
+9. [設定項目](#設定項目)
+10. [今後の改善予定](#今後の改善予定)
+11. [貢献者](#貢献者)
+12. [連絡先](#連絡先)
 
 ---
 
 ## 概要
 
-* **プロジェクト名**：HotAICafe リアルタイムカフェ空席モニタリングシステム
-* **目的**：ESP32-S3センサーでカフェ席の入退店を検知し、AIで最適化したパーソナライズ表示とマイコンによるリアルタイム更新を可能にすることで、利用者と店舗スタッフ双方の利便性を高めます。
-* **主な技術スタック**:
+HotAICafe は、**OpenAI ChatGPT API と IoT センサーを組み合わせたカフェ向け提案システム**です。
 
-  * **ESP32-S3（センサー側）**：顔認証カメラ＋超音波センサー
-  * **バックエンド**：Python + Flask（Google App Engine）
-  * **フロントエンド**：TypeScript + React
+ユーザーはチャット形式で好みや利用目的を伝えるだけで、AI がその内容を理解し、ESP32-S3 センサーからリアルタイムに取得されるカフェ内の空席・混雑状況・利用状態を考慮した提案を返します。
+
+これにより、従来の静的なレコメンドではなく、**「ユーザーの嗜好 × 現在の環境状況」に基づく動的なパーソナライズ提案**を実現します。
+
+### 主な技術スタック
+
+- **ESP32-S3（センサー側）**：顔認証カメラ、超音波センサー
+- **バックエンド**：Python + Flask（Google App Engine）
+- **フロントエンド**：TypeScript + React
+- **AI**：OpenAI ChatGPT API による嗜好分析・提案生成
+
+## 主な特徴
+
+- チャット形式でユーザーの好みや利用意図を自然に取得
+- OpenAI ChatGPT API による高度な自然言語理解
+- リアルタイム画像・センサーデータに基づく状況理解
+- カフェの混雑状況を考慮した AI 応答と提案
+- 利用者と店舗スタッフ双方の意思決定を支援
 
 ## 機能
 
-* **AIによるパーソナライズ表示**
+- **AI による対話的な提案**
+  - OpenAI ChatGPT API を活用した自然言語処理
+  - ユーザーの嗜好・目的（静かに作業したい、複数人で利用したい等）を対話から推定
+  - センサーデータと組み合わせたコンテキストアウェアな提案
+  - 状況に応じた席・利用方法の提案
 
-  * 利用者の過去の行動履歴や好みに応じた席提案
-  * 人気席や推奨席をハイライト
-* **マイコンによるリアルタイム更新**
+- **リアルタイム状況取得**
+  - ESP32-S3 による空席・混雑状況の検知
+  - センサーデータを即時バックエンドへ送信
 
-  * ESP32-S3からのセンサーデータを即時反映
-  * WebSocketでフロントエンドにライブ配信
-* **リアルタイム空席表示**
+- **リアルタイム更新**
+  - WebSocket を用いたフロントエンドへのライブ反映
 
-  * ダッシュボードで現在の空席数を表示
-* **履歴グラフ**
+- **履歴可視化**
+  - 過去の座席利用状況をグラフで確認
 
-  * 過去24時間の座席利用推移をチャートで確認
-* **店舗除外機能**
-
-  * メンテナンス中店舗の一覧からの除外
-* **データエクスポート**
-
-  * JSON形式で現在値・履歴データをダウンロード
+- **データエクスポート**
+  - 現在値・履歴データの JSON 出力
 
 ## アーキテクチャ
 
-```
-[ESP32-S3センサー]
-       ↓ HTTP POST（JSON）
-[Flaskバックエンド API] ── Google App Engine
-       ↑ WebSocket／HTTP
-[Reactフロントエンド SPA]
-```
+<p align="center">
+  <img src="images/architecture.png" alt="システムアーキテクチャ図" width="800">
+</p>
 
-1. **ESP32-S3**
+システムは以下の4つの主要コンポーネントで構成されています：
 
-   * 顔認証カメラ＋超音波センサーで入退店と座席利用を検知
-   * 定期的にJSONでバックエンドへ送信
-2. **バックエンド（Python + Flask）**
+- **ESP32-S3 センサー層**
+  - カフェ内の状況をリアルタイムに取得
+  - 画像データとセンサーデータを JSON 形式で送信
 
-   * データ受信・集計・保存
-   * WebSocketでフロントへライブ送信
-3. **フロントエンド（TypeScript + React）**
+- **Flask バックエンド API 層**
+  - センサーデータの受信・集計・保存
+  - OpenAI ChatGPT API との連携
+  - WebSocket/HTTP 通信によるフロントエンドへの配信
+  - Google App Engine 上で稼働
 
-   * ライブデータの取得とダッシュボード表示
-   * AIモデルを呼び出し、パーソナライズ結果を反映
+- **OpenAI ChatGPT API**
+  - ユーザーの対話内容を分析
+  - センサーデータを考慮した提案生成
+
+- **React フロントエンド層**
+  - チャット UI を通じたユーザー入力
+  - リアルタイムデータの可視化
+  - AI の提案結果を表示
 
 ## リポジトリ構成
 
 ```
 /
-├ ESP32-S3/            （センサー用ファームウェア）
-│   ├ platformio.ini
-│   └ src/
-│       └ main.cpp
-├ BackEnd/            （Flaskバックエンド）
-│   ├ analysis.py
-│   ├ requirements.txt
-│   └ app.yaml
-├ frontend/           （React SPA）
-│   ├ public/
-│   └ src/
-├ .gitignore
-└ README.md
+├── ESP32-S3/              # センサー用ファームウェア
+│   ├── platformio.ini
+│   └── src/
+│       └── main.cpp
+├── BackEnd/               # Flask バックエンド
+│   ├── analysis.py
+│   ├── requirements.txt
+│   └── app.yaml
+├── frontend/              # React SPA
+│   ├── public/
+│   └── src/
+├── images/                # README用画像
+│   ├── app-overview.png
+│   └── architecture.png
+├── .gitignore
+└── README.md
 ```
 
 ## 前提環境
 
-* **ESP32-S3**: PlatformIOまたはArduino IDE
-* **Python**: 3.8以上
-* **Node.js & npm**: Node.js 14以上
-* **Google Cloud SDK**: App Engineデプロイ用
+- **ESP32-S3**：PlatformIO または Arduino IDE
+- **Python**：3.8 以上
+- **Node.js & npm**：Node.js 14 以上
+- **Google Cloud SDK**：App Engine デプロイ用
+- **OpenAI API キー**：ChatGPT API 利用のため
 
 ## セットアップ＆インストール
 
 ### ESP32-S3 ファームウェア
 
 1. `ESP32-S3/` ディレクトリへ移動
+2. `src/main.cpp` に Wi-Fi 情報とバックエンド URL を設定
+3. ビルドおよびアップロード
 
-   ```bash
-   cd ESP32-S3
-   ```
-2. `src/main.cpp` にWi-Fi情報とバックエンドURLを設定
-3. ビルド＆アップロード
-
-   ```bash
-   pio run --target upload
-   ```
+```bash
+cd ESP32-S3
+pio run --target upload
+```
 
 ### バックエンドサーバ
 
-1. `BackEnd/` ディレクトリへ移動
-2. 仮想環境作成 & 依存パッケージインストール
+1. 依存パッケージのインストール
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   ```
-3. ローカル起動（ポート8080）
-4. GAEデプロイ
+```bash
+cd BackEnd
+python -m venv venv
+source venv/bin/activate  # Windows の場合: venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-   ```bash
-   gcloud config set project YOUR_PROJECT_ID
-   gcloud app deploy app.yaml
-   ```
+2. 環境変数の設定
+
+```bash
+# OpenAI API キーの設定
+export OPENAI_API_KEY="your-openai-api-key-here"
+```
+
+3. Google App Engine へデプロイ
+
+```bash
+gcloud config set project YOUR_PROJECT_ID
+gcloud app deploy app.yaml
+```
+
+**注意**: `app.yaml` に環境変数を設定する場合:
+
+```yaml
+env_variables:
+  OPENAI_API_KEY: "your-openai-api-key-here"
+```
 
 ### フロントエンドアプリ
 
-1. `frontend/` へ移動
-2. 依存パッケージインストール
+```bash
+cd frontend
+npm install
+npm start
+```
 
-   ```bash
-   npm install
-   ```
-3. `src/config.ts` にAPIエンドポイント設定
-4. 開発サーバ起動
-
-   ```bash
-   npm start
-   ```
-5. 本番ビルド
-
-   ```bash
-   npm run build
-   ```
+ブラウザで `http://localhost:3000` にアクセスしてください。
 
 ## 使い方
 
-1. ESP32-S3を起動してWi-Fi接続
-2. バックエンドのログでデータ受信を確認
-3. ブラウザでフロントエンドにアクセス
-4. 「除外」チェックで店舗表示を切り替え
-5. 「JSONエクスポート」でデータダウンロード
+1. ESP32-S3 を起動し、カフェ内の状況取得を開始
+2. バックエンドでデータ受信を確認
+3. ブラウザからフロントエンドへアクセス
+4. チャット形式で好みや目的を入力（例: 「静かに作業できる席はありますか？」）
+5. AI がリアルタイムのカフェ状況を反映した提案を返答
 
 ## 設定項目
 
-* **ESP32-S3 (`src/main.cpp`)**: `WIFI_SSID`, `WIFI_PASSWORD`, `BACKEND_URL`
-* **バックエンド (`analysis.py`)**: ポート設定（デフォルト8080）
-* **App Engine (`app.yaml`)**: プロジェクトID、サービス名等
-* **フロントエンド (`src/config.ts`)**: `API_BASE_URL`
+- **ESP32-S3** (`main.cpp`)：Wi-Fi 情報、バックエンド URL
+- **バックエンド** (`analysis.py`)：ポート・集計設定、OpenAI API キー
+- **フロントエンド** (`config.ts`)：API エンドポイント
 
 ## 今後の改善予定
 
-* 満席／空席アラートのプッシュ通知
-* モバイルアプリ化 (React Native)
-* AIを用いた利用予測機能
-* UI/UX強化（ショートカット、複数画像表示など）
+- 混雑・満席時のプッシュ通知
+- モバイルアプリ化（React Native）
+- 利用状況の予測・推薦精度向上
+- UI / UX の改善
+- 多言語対応
+- ユーザー履歴に基づく学習機能
 
 ## 貢献者
 
-* 玉城（@gusuku-oknw）
-* 岡田（@otake-code）
-* 田上
-* 立岩
-
-## 連絡先
-
-ご質問は以下までご連絡ください。
-
-* メール: [gusuku.oknw@example.com](mailto:gusuku.oknw@example.com)
+- 玉城（[@gusuku-oknw](https://github.com/gusuku-oknw)）
+- 岡田（[@otake-code](https://github.com/otake-code)）
+- 田上
+- 立岩
 
 ---
 
-**Enjoy monitoring!**
+Enjoy monitoring & personalized recommendations with HotAICafe! ☕️✨
